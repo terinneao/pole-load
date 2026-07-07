@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pole Load Calculator</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <h1>Pole Load Calculator</h1>
+    <p>Dead-end conductors on four sides &middot; forces &amp; bending moments &middot; units: kg, m</p>
+  </div>
+</header>
+
+<main>
+  <div class="layout">
+    <!-- ============ INPUT COLUMN ============ -->
+    <div class="col-input">
+      <section class="card">
+        <h2>Project</h2>
+        <div class="grid-2">
+          <label>Project name
+            <input type="text" id="project-name" placeholder="e.g. 22 kV line extension">
+          </label>
+          <label>Structure name
+            <input type="text" id="structure-name" placeholder="e.g. Pole no. 24 (dead-end)">
+          </label>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Wind</h2>
+        <div class="grid-3">
+          <label>Wind pressure on conductors (kg/m&sup2;)
+            <input type="number" id="wind-pressure" value="50" min="0" step="any">
+          </label>
+          <label>Wind pressure on pole (kg/m&sup2;)
+            <input type="number" id="pole-wind-pressure" value="50" min="0" step="any">
+          </label>
+          <label>Wind angle (&deg; from Side&nbsp;1 axis)
+            <input type="number" id="wind-angle" value="90" step="any">
+          </label>
+        </div>
+        <p class="hint">Sides point at 0&deg;, 90&deg;, 180&deg;, 270&deg; (counter-clockwise, plan view).
+          Line angle rotates a conductor from its side axis.</p>
+      </section>
+
+      <section class="card">
+        <h2>Pole</h2>
+        <div class="grid-2" style="margin-bottom:12px">
+          <label>Pole size
+            <select id="pole-size"></select>
+          </label>
+          <label>Number of poles
+            <input type="number" id="pole-count" value="1" min="1" step="1">
+          </label>
+        </div>
+        <div class="grid-3">
+          <label>Pole height above ground (m)
+            <input type="number" id="pole-height" value="10.5" min="0" step="any">
+          </label>
+          <label>Width at top (m)
+            <input type="number" id="pole-width-top" value="0.16" min="0" step="any">
+          </label>
+          <label>Width at ground line (m)
+            <input type="number" id="pole-width-ground" value="0.30" min="0" step="any">
+          </label>
+          <label>Drag coefficient C<sub>d</sub>
+            <input type="number" id="pole-cd" value="1.0" min="0" step="any">
+          </label>
+          <label>Pole strength (kg&middot;m)
+            <input type="number" id="pole-strength" value="0" min="0" step="any">
+          </label>
+        </div>
+        <p class="hint">Wind on the pole shaft is calculated from the trapezoidal projected
+          area (height &times; average width) &times; C<sub>d</sub> &times; wind pressure,
+          applied at the centroid height and added to the totals.</p>
+      </section>
+
+      <div id="sections"></div>
+
+      <div class="actions">
+        <button id="add-section" class="btn secondary" type="button">+ Add conductor level</button>
+        <button id="calculate" class="btn primary" type="button">Calculate</button>
+      </div>
+    </div>
+
+    <!-- ============ RESULTS COLUMN ============ -->
+    <div class="col-results">
+      <section class="card" id="results-card">
+        <div class="results-head">
+          <h2>Results</h2>
+          <button id="print-btn" class="btn secondary small" type="button" hidden>
+            Print / PDF
+          </button>
+        </div>
+        <div id="results-empty" class="hint">Enter data and press <b>Calculate</b>.</div>
+        <div id="results" hidden>
+          <div class="summary-grid" id="summary"></div>
+          <div id="direction-summary"></div>
+          <div id="plan-view"></div>
+          <div id="section-results"></div>
+        </div>
+        <div id="error" class="error" hidden></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<template id="section-template">
+  <section class="card section-card">
+    <div class="section-head">
+      <h2 class="section-title">Level 1</h2>
+      <div>
+        <label class="inline">Attachment height (m)
+          <input type="number" class="height" value="9" min="0" step="any">
+        </label>
+        <button class="btn danger small remove-section" type="button">Remove</button>
+      </div>
+    </div>
+    <div class="sides"></div>
+  </section>
+</template>
+
+<template id="side-template">
+  <div class="side">
+    <label class="side-toggle">
+      <input type="checkbox" class="enabled">
+      <span class="side-name">Side 1 (0&deg;)</span>
+    </label>
+    <div class="side-fields">
+      <label>Conductor
+        <select class="conductor"></select>
+      </label>
+      <label>No. of conductors
+        <input type="number" class="count" value="3" min="1" step="1">
+      </label>
+      <label>Span (m)
+        <input type="number" class="span" value="80" min="0.1" step="any">
+      </label>
+      <label>Sag (m)
+        <input type="number" class="sag" value="1.00" min="0.01" step="0.01">
+      </label>
+      <label>Line angle (&deg;)
+        <input type="number" class="line-angle" value="0" step="any">
+      </label>
+      <label class="balance-toggle" hidden>
+        <input type="checkbox" class="balance">
+        <span class="balance-label">Auto sag: equalize tension with opposite side</span>
+      </label>
+    </div>
+  </div>
+</template>
+
+<div id="print-sheet"></div>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
