@@ -22,6 +22,12 @@ sides of the pole. All units are **kg** and **m**.
   `n · Cd · P · height · (width_top + width_ground)/2`, applied at the
   centroid height of the trapezoidal projected area and included in the
   force and moment totals.
+- Interactive 3D view (three.js, loaded from a CDN, so it needs internet
+  access) of the pole, crossarms and sagging conductors on every level. It
+  redraws as you edit the inputs; after **Calculate** it also shows the
+  resultant force arrow per level and the wind force on the pole. Spans
+  are shortened to 2.5 × pole height by default; tick *Full span length*
+  to draw them to scale.
 
 ## Calculation method
 

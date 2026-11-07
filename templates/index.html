@@ -90,6 +90,21 @@
 
     <!-- ============ RESULTS COLUMN ============ -->
     <div class="col-results">
+      <section class="card" id="view3d-card">
+        <div class="results-head">
+          <h2>3D view</h2>
+          <div class="view3d-tools">
+            <label class="check-inline">
+              <input type="checkbox" id="view3d-full"> Full span length
+            </label>
+            <button id="view3d-reset" class="btn secondary small" type="button">Reset view</button>
+          </div>
+        </div>
+        <div id="view3d"><p class="hint">Loading 3D view&hellip; (needs internet access to load three.js)</p></div>
+        <p class="hint">Drag to rotate, right-drag to pan, scroll to zoom.
+          <span id="view3d-status"></span></p>
+      </section>
+
       <section class="card" id="results-card">
         <div class="results-head">
           <h2>Results</h2>
@@ -158,6 +173,13 @@
 <div id="print-sheet"></div>
 
 <script src="{{ url_for('static', filename='app.js') }}"></script>
+<script type="importmap">
+{ "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module" src="{{ url_for('static', filename='pole3d.js') }}"></script>
 <!-- <script src="static/app.js"></script> -->
 </body>
 </html>

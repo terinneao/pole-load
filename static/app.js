@@ -59,10 +59,17 @@ function addSection() {
   card.querySelector(".remove-section").addEventListener("click", () => {
     card.remove();
     renumberSections();
+    notifyInputsChanged();
   });
 
   el("#sections").appendChild(tpl);
   renumberSections();
+  notifyInputsChanged();
+}
+
+// lets the 3D view redraw after changes that fire no input/change event
+function notifyInputsChanged() {
+  document.dispatchEvent(new Event("pole:inputs-changed"));
 }
 
 function renumberSections() {
@@ -135,6 +142,7 @@ async function calculate() {
     lastData = data;
     renderResults(data);
     el("#print-btn").hidden = false;
+    document.dispatchEvent(new CustomEvent("pole:calculated", { detail: { payload, data } }));
   } catch (e) {
     showError(e.message);
   }
@@ -550,6 +558,10 @@ async function init() {
     el(".enabled", firstSides[i]).checked = true;
     firstSides[i].classList.add("on");
   });
+  notifyInputsChanged();
 }
+
+// used by the 3D view (static/pole3d.js)
+window.poleApp = { collectPayload, getConductors: () => conductors };
 
 init();
